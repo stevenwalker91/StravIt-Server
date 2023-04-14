@@ -2,24 +2,15 @@ const createError = require('http-errors');
 const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
+const cookieSession = require("cookie-session");
 const logger = require('morgan');
+const cors = require('cors');
+const passportSetup = require('./passport-setup');
 const passport = require('passport');
-const StravaStrategy = require('passport-strava-oauth2').Strategy;
-const session = require('express-session');
 require('dotenv').config()
 
 const indexRouter = require('./routes/index');
 const authRouter = require('./routes/auth');
-
-
-passport.serializeUser(function(user, done) {
-  done(null, user);
-});
-
-passport.deserializeUser(function(obj, done) {
-  done(null, obj);
-});
-
 
 const app = express();
 
@@ -32,17 +23,29 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(session({
-  secret: 'test',
-  resave: true,
-  saveUninitialized: true
-}));
+app.use(
+  cookieSession({name:"session", keys:[process.env.SESSION_KEY], maxAge: 24 * 60 * 60 * 100,})
+);
 app.use(passport.initialize());
 app.use(passport.session());
+app.use(cors({
+  origin: "http://localhost:5000",
+  methods: "GET,POST,PUT,DELETE",
+  credentials: true,
+})
+);
 
+const authCheck = (req, res, next) => {
+  if (!req.user) {
+    console.log('no user')
+  } else {
+    console.log(req.user)
+  }
+  next();
+};
 
-app.use('/', indexRouter);
 app.use('/auth', authRouter);
+app.use('/', authCheck, indexRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
