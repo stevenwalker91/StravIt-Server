@@ -14,8 +14,15 @@
   </h1>
   <p>Welcome to <%= title %>
   </p>
-
-  <a href="/auth/strava">Login with Strava</a>
+  <% if (loggedIn) { %>
+    <img src="<%= user.profilePicture %>">
+    <p>
+      You are logged in as <%= user.displayName %> and your short lived token is <%= user.accessToken %>
+    </p>
+    <a href="/auth/logout">Log out</a>
+    <% } else {%>
+      <a href="/auth/strava">Login with Strava</a>
+      <% }%>
 </body>
 
 </html>

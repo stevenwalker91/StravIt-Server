@@ -7,12 +7,15 @@ const logger = require('morgan');
 const cors = require('cors');
 const passportSetup = require('./passport-setup');
 const passport = require('passport');
+const mongoose = require('mongoose');
 require('dotenv').config()
 
 const indexRouter = require('./routes/index');
 const authRouter = require('./routes/auth');
 
 const app = express();
+
+mongoose.connect(process.env.MONGODB_URI);
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -39,7 +42,7 @@ const authCheck = (req, res, next) => {
   if (!req.user) {
     console.log('no user')
   } else {
-    console.log(req.user)
+    console.log('user found')
   }
   next();
 };

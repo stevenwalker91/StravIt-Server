@@ -4,10 +4,13 @@ const router = express.Router();
 /* GET home page. */
 router.get('/', function(req, res, next) {
   if (req.user) {
-    res.render('index', { title: 'Logged in' });
+  
+    res.render('index', { title: 'StravIt', loggedIn: true, user: req.user });
+  } else {
+    res.render('index', { title: 'StravIt', loggedIn: false });
   }
-  console.log(req.user)
-  res.render('index', { title: 'StravIt' });
+
+  
   
 });
 

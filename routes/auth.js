@@ -21,13 +21,19 @@ router.get('/login/failed', (req, res) => {
   })
 })
 
-router.get('/strava', passport.authenticate('strava', { scope: ['read_all'] }));
+router.get('/logout', (req, res) => {
+  req.logout();
+  res.redirect('/')
+})
+
+router.get('/strava', passport.authenticate('strava', { scope: ['activity:read'] }));
 
 router.get('/strava/callback', passport.authenticate('strava', { 
-  successRedirect: SUCCESS_URL,
+  successRedirect: '/',
   failureRedirect: '/auth/login/failed' 
   })
 );
+
 
 
 
